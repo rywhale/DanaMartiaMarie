@@ -9,3 +9,119 @@ text {
 .stn-text text {
 	font-size: 14pt;
 }
+/*
+Aspects of styling shamelessly ripped from
+https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css
+*/
+
+
+html{
+  height: 100vh;
+}
+
+body{
+  font-family:-apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans',
+  'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  line-height:1.4;
+  margin:0px auto;
+  min-height: 100vh;
+  padding:0 0px;
+  color:#dbdbdb;
+  background:black;
+  text-rendering:optimizeLegibility
+}
+
+.well { 
+	background-color: black;
+}
+
+select{
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+h1{
+  font-size:2.2em;
+  margin-top:0
+}
+
+h1,h2,h3,h4,h5,h6{
+  margin-bottom:12px
+}
+
+h1,h2,h3,h4,h5,h6,strong{
+  color:#fff
+}
+h1,h2,h3,h4,h5,h6,b,strong,th{
+  font-weight:600
+}
+
+textarea{
+  margin-right:0;
+  width:100%;
+  box-sizing:border-box;
+  resize:vertical;
+}
+
+.title-text { 
+	font-size: 36px;
+	font-style: bold;
+	text-align: center;
+}
+
+a { 
+	color: white
+}
+
+a:hover{
+  text-decoration:underline
+}
+
+img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr{
+  border:none;
+  border-top:1px solid #dbdbdb
+}
+
+#title-text {
+  text-align: center;
+  font-size:2.4em;
+  margin-top:0
+}
+
+/* Loading spinner */
+@keyframes spinner-line-fade-more {
+  0%, 100% {
+    opacity: 0; /* minimum opacity */
+  }
+  1% {
+    opacity: 1;
+  }
+}
+
+@keyframes spinner-line-fade-quick {
+  0%, 39%, 100% {
+    opacity: 0.25; /* minimum opacity */
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes spinner-line-fade-default {
+  0%, 100% {
+    opacity: 0.22; /* minimum opacity */
+  }
+  1% {
+    opacity: 1;
+  }
+}

@@ -18,20 +18,22 @@ source("dana_utils.R")
 
 ui <- fluidPage(
   theme = "danamartia.css",
-  titlePanel("DanaMartia"),
+  titlePanel("", windowTitle = "Dana Martia Marie"),
+  h2("Dana Martia Marie", class = "title-text"),
   leafletOutput("stn_map", height = "800px"),
   hr(),
   sidebarLayout(
-   
     sidebarPanel(
       htmlOutput("stn_text", class = "stn-text"),
       htmlOutput("stn_start", class = "stn-text"),
       htmlOutput("thresh_title", class = "stn-text"),
       tableOutput("thresh_table"),
-      htmlOutput("link_text", class = "stn-text")
+      htmlOutput("link_text", class = "stn-text"),
+      width = 4
     ),
     mainPanel(
-      plotOutput("stn_plot", height = "800px")
+      plotOutput("stn_plot", height = "800px"),
+      width = 8
     )
   )
 )
@@ -43,7 +45,7 @@ server <- function(input, output, session) {
   
   # URL for LIO topographic map tiles
   lio_topo_url <- "https://ws.giscache.lrc.gov.on.ca/arcgis/rest/services/LIO_Cartographic/LIO_Topographic/MapServer"
-
+  
   withProgress(
     message = "Gathering data", value = 0, {
       # Gauge metadata (including coords)
@@ -124,10 +126,16 @@ server <- function(input, output, session) {
 
       output$stn_map <- renderLeaflet({
         leaflet(gauge_meta) %>%
-          addEsriTiledMapLayer(lio_topo_url) %>%
-          addCircleMarkers(
+          # addEsriTiledMapLayer(lio_topo_url) %>%
+          addProviderTiles('CartoDB.DarkMatter') %>%
+          addAwesomeMarkers(
             layerId = ~STATION_ID,
-            clusterOptions = markerClusterOptions()
+            clusterOptions = markerClusterOptions(),
+            icon = awesomeIcons(
+              icon = 'ios-speedometer',
+              library = "ion",
+              iconColor = "white"
+            )
           )
       })
 
@@ -145,7 +153,8 @@ server <- function(input, output, session) {
       thresh_dat %>%
         filter(
           station_number  == input$stn_map_marker_click$id
-        )
+        ) %>%
+        na.omit()
     }, width = "100%")
 
     
@@ -173,7 +182,7 @@ server <- function(input, output, session) {
     output$link_text <- renderUI({
       HTML(glue(
         "<text><a href='https://wateroffice.ec.gc.ca/report/real_time_e.html?stn={input$stn_map_marker_click$id}' 
-        style = 'color: blue' target='_blank'>View on WSC Website</a>"
+        target='_blank'>View on WSC Website</a>"
       ))
     })
     

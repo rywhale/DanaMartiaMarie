@@ -4,8 +4,8 @@ plot_stn_data <- function(stn_data) {
     stn_data,
     aes(x = TIMESTAMP, y = Value)
   ) +
-    geom_point(col = "#047BC1") +
-    geom_line(col = "#439CD1") +
+    geom_point(fill = "white", colour = "grey") +
+    geom_line(colour = "white") +
     # geom_hline(aes(yintercept = `25%`, col = "25%")) +
     # geom_hline(aes(yintercept = `50%`, col = "50%")) +
     # geom_hline(aes(yintercept = `75%`, col = "75%")) +
@@ -15,12 +15,13 @@ plot_stn_data <- function(stn_data) {
     ylab(NULL) +
     theme(
       panel.grid.minor = element_blank(),
-      panel.background = element_rect(fill = "white"),
-      panel.border = element_rect(size = 1.5, fill = NA),
-      axis.text = element_text(size = 12),
-      axis.line = element_line(size = 1.15),
+      panel.background = element_rect(fill = "black", color = "black"),
+      plot.background = element_rect(fill = 'black',  color = "black"),
+      panel.border = element_blank(),
+      axis.text = element_text(size = 14, colour = 'white'),
+      axis.line = element_line(size = 1.15, colour = "white"),
       strip.background = element_blank(),
-      strip.text = element_text(size = 14, face = "bold"),
+      strip.text = element_text(size = 18, face = "bold", colour = "white"),
       strip.placement = "outside"
     )
 
