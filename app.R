@@ -41,8 +41,6 @@ server <- function(input, output, session) {
   
   load("danamartia_cache.rda")
   
-  print(names(hy_thresh))
-  
   # URL for LIO topographic map tiles
   lio_topo_url <- "https://ws.giscache.lrc.gov.on.ca/arcgis/rest/services/LIO_Cartographic/LIO_Topographic/MapServer"
 

@@ -1,4 +1,4 @@
 # Use
 ```
-shiny::runGitHub("rywhale", "DanaMartiaMarie")
+shiny::runGitHub("DanaMartiaMarie", "rywhale")
 ```
