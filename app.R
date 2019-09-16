@@ -1,5 +1,6 @@
 # Imports
 library(shiny)
+library(shinythemes)
 library(rtdd)
 library(dplyr)
 library(lubridate)
@@ -14,10 +15,16 @@ library(tidyhydat)
 library(purrr)
 library(snakecase)
 
+# Common utility functions
 source("dana_utils.R")
 
 ui <- fluidPage(
-  theme = "danamartia.css",
+  # Styling
+  theme = shinytheme("darkly"),
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "danamartia.css")
+  ),
+  # Content
   titlePanel("", windowTitle = "Dana Martia Marie"),
   h2("Dana Martia Marie", class = "title-text"),
   leafletOutput("stn_map", height = "800px"),
@@ -41,6 +48,7 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   
+  # Cached percentiles
   load("danamartia_cache.rda")
   
   # URL for LIO topographic map tiles
@@ -65,6 +73,7 @@ server <- function(input, output, session) {
         prov_terr = "ON", all_stns = TRUE
       )
       
+      # Check HYDAT vers of percentiles vs current on machine
       if(!tidyhydat::hy_version()$Date <= hy_vers_date){
         
         incProgress(1 / 4, detail = "Updating historical information, this could take several minutes.")
@@ -78,7 +87,10 @@ server <- function(input, output, session) {
       }
 
       # # Test with single station
-      # gauge_data <- dd_hydro_data(station_id = "02HA006", prov_terr = "ON")
+      # gauge_data <- dd_hydro_data(
+      #   station_id = "02HA006",
+      #   prov_terr = "ON"
+      #   )
 
       # Combine parameter columns
       gauge_data <- gauge_data %>%
@@ -122,19 +134,79 @@ server <- function(input, output, session) {
           )
         )
       
+      gauge_meta <- gauge_meta %>%
+        group_by(STATION_ID) %>%
+        mutate(
+          stn_col = assign_col(STATION_ID, gauge_data)
+        ) %>%
+        ungroup()
+      
       incProgress(3 / 4, detail = "Creating map")
-
+      
       output$stn_map <- renderLeaflet({
         leaflet(gauge_meta) %>%
           # addEsriTiledMapLayer(lio_topo_url) %>%
           addProviderTiles('CartoDB.DarkMatter') %>%
           addAwesomeMarkers(
             layerId = ~STATION_ID,
-            clusterOptions = markerClusterOptions(),
+            # Cluster marker colouring
+            clusterOptions = markerClusterOptions(
+              iconCreateFunction = JS(
+               "function (cluster) {
+               var markers = cluster.getAllChildMarkers();
+               
+               var child_cnt = cluster.getChildCount();
+               
+               var col_cnt = {
+                'grey' : 0,
+                'darkgreen': 0,
+                'lightgreen': 0,
+                'orange' : 0,
+                'red' : 0
+               }
+               
+               // Count stations in each colour class
+               markers.forEach(function(m){
+                 var col = m.options.icon.options.markerColor;
+                 col_cnt[col] += 1
+               })
+               
+               
+               var clust_max = 0;
+               var clust_col = 'grey';
+               
+               // Get most common class
+               for([col, val] of Object.entries(col_cnt)) {
+                if(val > clust_max){
+                 clust_max = val
+                 clust_col = col
+                }
+               }
+               
+               // Initial style
+               var style = 'marker-cluster-small';
+               
+               if(clust_col == 'yellow' | clust_col == 'orange'){
+                style = 'marker-cluster-medium'
+               }
+               
+               if(clust_col == 'red'){
+                style = 'marker-cluster-large'
+               }
+            
+               return L.divIcon({ 
+                html: '<div><span>' + child_cnt + '</span></div>',
+                className: 'marker-cluster ' + style,
+                iconSize: new L.Point(40, 40)
+                });
+               }"
+              )
+            ),
             icon = awesomeIcons(
               icon = 'ios-speedometer',
               library = "ion",
-              iconColor = "white"
+              iconColor = "#FFFFFF",
+              markerColor = gauge_meta$stn_col
             )
           )
       })
@@ -156,14 +228,6 @@ server <- function(input, output, session) {
         ) %>%
         na.omit()
     }, width = "100%")
-
-    
-    # stn_data %>%
-    #   group_by(Parameter) %>%
-    #   summarise(
-    #     "Minimum for period" = min(Value, na.rm = TRUE),
-    #     "Maximum for period" = max(Value, na.rm = TRUE)
-    #   )
     
     output$thresh_title <- renderUI({
       HTML("<b> Percentiles for Period of Record </b><br>")
@@ -176,9 +240,6 @@ server <- function(input, output, session) {
       ))
     })
 
-    # <b>Location: </b><text>{input$stn_map_marker_click$lat}, {input$stn_map_marker_click$lng}<br></text>"
-
-    
     output$link_text <- renderUI({
       HTML(glue(
         "<text><a href='https://wateroffice.ec.gc.ca/report/real_time_e.html?stn={input$stn_map_marker_click$id}' 

@@ -4,8 +4,8 @@ plot_stn_data <- function(stn_data) {
     stn_data,
     aes(x = TIMESTAMP, y = Value)
   ) +
-    geom_point(fill = "white", colour = "grey") +
-    geom_line(colour = "white") +
+    geom_point(fill = "#66326B", colour = "#8C5391") +
+    geom_line(colour = "#8C5391") +
     # geom_hline(aes(yintercept = `25%`, col = "25%")) +
     # geom_hline(aes(yintercept = `50%`, col = "50%")) +
     # geom_hline(aes(yintercept = `75%`, col = "75%")) +
@@ -15,10 +15,13 @@ plot_stn_data <- function(stn_data) {
     ylab(NULL) +
     theme(
       panel.grid.minor = element_blank(),
-      panel.background = element_rect(fill = "black", color = "black"),
-      plot.background = element_rect(fill = 'black',  color = "black"),
+      panel.grid.major = element_line(colour = "lightgrey", size = 0.25),
+      plot.background = element_rect(fill = "#222222", color = "#222222"),
+      panel.background = element_rect(fill = "#4F4E4E",  color = "#4F4E4E"),
       panel.border = element_blank(),
+      panel.spacing = unit(2, "lines"),
       axis.text = element_text(size = 14, colour = 'white'),
+      axis.title = element_text(size = 18, face = "bold", colour = "white"),
       axis.line = element_line(size = 1.15, colour = "white"),
       strip.background = element_blank(),
       strip.text = element_text(size = 18, face = "bold", colour = "white"),
@@ -36,6 +39,28 @@ plot_stn_data <- function(stn_data) {
       )
   }
   return(p_out)
+}
+
+assign_col <- function(wsc_id, gauge_data){
+  
+  stn_data <- gauge_data %>%
+    filter(
+      STATION_ID == wsc_id & 
+        Parameter == "Water Level (m)"
+    ) 
+  
+  stn_data <- stn_data %>%
+    filter(
+      TIMESTAMP == max(stn_data$TIMESTAMP)
+    )
+  
+    case_when(
+      stn_data$Value > stn_data$`25%` ~ "darkgreen",
+      stn_data$Value > stn_data$`50%` ~ "lightgreen",
+      stn_data$Value > stn_data$`75%` ~ "orange",
+      stn_data$Value > stn_data$`90%` ~ "red",
+      TRUE ~ "grey"
+    )
 }
 
 calc_thresh <- function(wsc_id) {

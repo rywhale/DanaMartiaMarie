@@ -1,3 +1,8 @@
+/*
+Aspects of styling shamelessly ripped from
+https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css
+*/
+
 text { 
 	font-size: 12pt;
 }
@@ -9,11 +14,6 @@ text {
 .stn-text text {
 	font-size: 14pt;
 }
-/*
-Aspects of styling shamelessly ripped from
-https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css
-*/
-
 
 html{
   height: 100vh;
@@ -31,12 +31,7 @@ body{
   min-height: 100vh;
   padding:0 0px;
   color:#dbdbdb;
-  background:black;
   text-rendering:optimizeLegibility
-}
-
-.well { 
-	background-color: black;
 }
 
 select{
