@@ -4,7 +4,7 @@ plot_stn_data <- function(stn_data) {
     stn_data,
     aes(x = TIMESTAMP, y = Value)
   ) +
-    geom_point(fill = "#66326B", colour = "#8C5391") +
+    geom_point(fill = "white") +
     geom_line(colour = "#8C5391") +
     # geom_hline(aes(yintercept = `25%`, col = "25%")) +
     # geom_hline(aes(yintercept = `50%`, col = "50%")) +
@@ -59,7 +59,7 @@ assign_col <- function(wsc_id, gauge_data){
       stn_data$Value > stn_data$`50%` ~ "lightgreen",
       stn_data$Value > stn_data$`75%` ~ "orange",
       stn_data$Value > stn_data$`90%` ~ "red",
-      TRUE ~ "grey"
+      TRUE ~ "gray"
     )
 }
 

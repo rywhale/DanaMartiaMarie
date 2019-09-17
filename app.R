@@ -33,6 +33,9 @@ ui <- fluidPage(
     sidebarPanel(
       htmlOutput("stn_text", class = "stn-text"),
       htmlOutput("stn_start", class = "stn-text"),
+      br(),
+      htmlOutput("val_text", class = "stn-text"),
+      tableOutput("last_val"),
       htmlOutput("thresh_title", class = "stn-text"),
       tableOutput("thresh_table"),
       htmlOutput("link_text", class = "stn-text"),
@@ -68,10 +71,10 @@ server <- function(input, output, session) {
 
       incProgress(1 / 4, detail = "Grabbing real-time station data")
 
-      # All station data
-      gauge_data <- rtdd::dd_hydro_data(
-        prov_terr = "ON", all_stns = TRUE
-      )
+      # # All station data
+      # gauge_data <- rtdd::dd_hydro_data(
+      #   prov_terr = "ON", all_stns = TRUE
+      # )
       
       # Check HYDAT vers of percentiles vs current on machine
       if(!tidyhydat::hy_version()$Date <= hy_vers_date){
@@ -86,11 +89,11 @@ server <- function(input, output, session) {
         thresh_dat <- hy_thresh
       }
 
-      # # Test with single station
-      # gauge_data <- dd_hydro_data(
-      #   station_id = "02HA006",
-      #   prov_terr = "ON"
-      #   )
+      # Test with single station
+      gauge_data <- dd_hydro_data(
+        station_id = "02HA006",
+        prov_terr = "ON"
+        )
 
       # Combine parameter columns
       gauge_data <- gauge_data %>%
@@ -206,7 +209,7 @@ server <- function(input, output, session) {
               icon = 'ios-speedometer',
               library = "ion",
               iconColor = "#FFFFFF",
-              markerColor = gauge_meta$stn_col
+              markerColor = ~stn_col
             )
           )
       })
@@ -230,7 +233,7 @@ server <- function(input, output, session) {
     }, width = "100%")
     
     output$thresh_title <- renderUI({
-      HTML("<b> Percentiles for Period of Record </b><br>")
+      HTML("<b> Percentiles for Period of Record: </b><br>")
     })
     
     output$stn_text <- renderUI({
@@ -245,6 +248,25 @@ server <- function(input, output, session) {
         "<text><a href='https://wateroffice.ec.gc.ca/report/real_time_e.html?stn={input$stn_map_marker_click$id}' 
         target='_blank'>View on WSC Website</a>"
       ))
+    })
+    
+    output$val_text <- renderUI({
+      HTML("<b> Latest Values: </b><br>")
+    })
+    
+    output$last_val <- renderTable({
+      stn_data %>%
+        filter(
+          TIMESTAMP == max(stn_data$TIMESTAMP)
+        ) %>%
+        mutate(
+          `Timestamp (UTC)` = as.character(TIMESTAMP)
+        ) %>%
+        select(
+          `Timestamp (UTC)`,
+          Value,
+          Parameter
+        )
     })
     
     output$stn_start <- renderUI({
