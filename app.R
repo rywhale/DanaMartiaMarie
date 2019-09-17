@@ -71,10 +71,10 @@ server <- function(input, output, session) {
 
       incProgress(1 / 4, detail = "Grabbing real-time station data")
 
-      # # All station data
-      # gauge_data <- rtdd::dd_hydro_data(
-      #   prov_terr = "ON", all_stns = TRUE
-      # )
+      # All station data
+      gauge_data <- rtdd::dd_hydro_data(
+        prov_terr = "ON", all_stns = TRUE
+      )
       
       # Check HYDAT vers of percentiles vs current on machine
       if(!tidyhydat::hy_version()$Date <= hy_vers_date){
@@ -89,11 +89,11 @@ server <- function(input, output, session) {
         thresh_dat <- hy_thresh
       }
 
-      # Test with single station
-      gauge_data <- dd_hydro_data(
-        station_id = "02HA006",
-        prov_terr = "ON"
-        )
+      # # Test with single station
+      # gauge_data <- dd_hydro_data(
+      #   station_id = "02HA006",
+      #   prov_terr = "ON"
+      #   )
 
       # Combine parameter columns
       gauge_data <- gauge_data %>%
