@@ -27,6 +27,7 @@ ui <- fluidPage(
   # Content
   titlePanel("", windowTitle = "Dana Martia Marie"),
   h2("Dana Martia Marie", class = "title-text"),
+  #htmlOutput("map_leg"),
   leafletOutput("stn_map", height = "800px"),
   hr(),
   sidebarLayout(
@@ -146,18 +147,24 @@ server <- function(input, output, session) {
       
       incProgress(3 / 4, detail = "Creating map")
       
+      output$map_leg <- renderUI({
+        HTML(legend_text)
+      })
+      
       output$stn_map <- renderLeaflet({
         leaflet(gauge_meta) %>%
           # addEsriTiledMapLayer(lio_topo_url) %>%
           addProviderTiles('CartoDB.DarkMatter') %>%
-          addAwesomeMarkers(
+          addCircleMarkers(
             layerId = ~STATION_ID,
+            color = ~stn_col,
+            fillColor = ~stn_col,
+            fillOpacity = 1,
             # Cluster marker colouring
             clusterOptions = markerClusterOptions(
               iconCreateFunction = JS(
                "function (cluster) {
                var markers = cluster.getAllChildMarkers();
-               
                var child_cnt = cluster.getChildCount();
                
                var col_cnt = {
@@ -170,7 +177,8 @@ server <- function(input, output, session) {
                
                // Count stations in each colour class
                markers.forEach(function(m){
-                 var col = m.options.icon.options.markerColor;
+                 //var col = m.options.icon.options.markerColor;
+                 var col = m.options.markerFill;
                  col_cnt[col] += 1
                })
                
@@ -196,7 +204,7 @@ server <- function(input, output, session) {
                if(clust_col == 'red'){
                 style = 'marker-cluster-large'
                }
-            
+               
                return L.divIcon({ 
                 html: '<div><span>' + child_cnt + '</span></div>',
                 className: 'marker-cluster ' + style,
@@ -204,13 +212,11 @@ server <- function(input, output, session) {
                 });
                }"
               )
-            ),
-            icon = awesomeIcons(
-              icon = 'ios-speedometer',
-              library = "ion",
-              iconColor = "#FFFFFF",
-              markerColor = ~stn_col
-            )
+            )) %>%
+          addLegend(
+            colors = c("grey", "darkgreen", "lightgreen", "orange", "red"),
+            labels = c("<25%", "25-50%", "50-75%", "75-90%", ">90%"),
+            position = "topleft"
           )
       })
 

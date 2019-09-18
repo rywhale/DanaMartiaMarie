@@ -4,8 +4,8 @@ plot_stn_data <- function(stn_data) {
     stn_data,
     aes(x = TIMESTAMP, y = Value)
   ) +
-    geom_point(fill = "white") +
-    geom_line(colour = "#8C5391") +
+    #geom_point(fill = "darkpurple") +
+    geom_line(colour = "blue", size = 1.25) +
     # geom_hline(aes(yintercept = `25%`, col = "25%")) +
     # geom_hline(aes(yintercept = `50%`, col = "50%")) +
     # geom_hline(aes(yintercept = `75%`, col = "75%")) +
@@ -59,7 +59,7 @@ assign_col <- function(wsc_id, gauge_data){
       stn_data$Value > stn_data$`50%` ~ "lightgreen",
       stn_data$Value > stn_data$`75%` ~ "orange",
       stn_data$Value > stn_data$`90%` ~ "red",
-      TRUE ~ "gray"
+      TRUE ~ "grey"
     )
 }
 
@@ -135,4 +135,5 @@ update_thresh <- function(wsc_ids, out_path) {
     bind_rows()
 
   save(hy_vers_date, hy_thresh[1:8], out_path)
+
 }
