@@ -77,6 +77,12 @@ server <- function(input, output, session) {
         prov_terr = "ON", all_stns = TRUE
       )
       
+      # # Test with single station
+      # gauge_data <- dd_hydro_data(
+      #   station_id = "02HA006",
+      #   prov_terr = "ON"
+      #   )
+      
       # Check HYDAT vers of percentiles vs current on machine
       if(!tidyhydat::hy_version()$Date <= hy_vers_date){
         
@@ -89,12 +95,6 @@ server <- function(input, output, session) {
       }else{
         thresh_dat <- hy_thresh
       }
-
-      # # Test with single station
-      # gauge_data <- dd_hydro_data(
-      #   station_id = "02HA006",
-      #   prov_terr = "ON"
-      #   )
 
       # Combine parameter columns
       gauge_data <- gauge_data %>%
@@ -178,7 +178,7 @@ server <- function(input, output, session) {
                // Count stations in each colour class
                markers.forEach(function(m){
                  //var col = m.options.icon.options.markerColor;
-                 var col = m.options.markerFill;
+                 var col = m.options.fillColor
                  col_cnt[col] += 1
                })
                
@@ -214,8 +214,8 @@ server <- function(input, output, session) {
               )
             )) %>%
           addLegend(
-            colors = c("grey", "darkgreen", "lightgreen", "orange", "red"),
-            labels = c("<25%", "25-50%", "50-75%", "75-90%", ">90%"),
+            colors = c("darkgreen", "lightgreen", "orange", "red"),
+            labels = c("< 50%", "50-75%", "75-90%", ">90%"),
             position = "topleft"
           )
       })
@@ -271,6 +271,9 @@ server <- function(input, output, session) {
         select(
           `Timestamp (UTC)`,
           Value,
+          Parameter
+        ) %>%
+        arrange(
           Parameter
         )
     })

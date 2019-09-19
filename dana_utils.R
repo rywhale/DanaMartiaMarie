@@ -55,7 +55,7 @@ assign_col <- function(wsc_id, gauge_data){
     )
   
     case_when(
-      stn_data$Value > stn_data$`25%` ~ "darkgreen",
+      stn_data$Value < stn_data$`50%` ~ "darkgreen",
       stn_data$Value > stn_data$`50%` ~ "lightgreen",
       stn_data$Value > stn_data$`75%` ~ "orange",
       stn_data$Value > stn_data$`90%` ~ "red",

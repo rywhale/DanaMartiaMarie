@@ -2,6 +2,31 @@
 Aspects of styling shamelessly ripped from
 https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css
 */
+     
+
+.marker-cluster-large { 
+	background-color: rgba(218, 94, 94, 0.6) !important;
+}
+
+.marker-cluster-large div { 
+	background-color: rgba(218, 94, 94, 0.6) !important;
+}
+
+.marker-cluster-medium { 
+	background-color: rgb(247, 186, 50) !important;
+}
+
+.marker-cluster-medium div { 
+	background-color: rgb(247, 186, 50) !important;
+}
+
+.marker-cluster-small { 
+	background-color: rgb(0, 176, 87) !important;
+}
+
+.marker-cluster-small div { 
+	background-color: rgb(0, 176, 87) !important;
+}
          
 text { 
 	font-size: 12pt;
