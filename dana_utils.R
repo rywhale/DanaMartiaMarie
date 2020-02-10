@@ -98,14 +98,15 @@ calc_thresh <- function(wsc_id) {
   } else {
     station_thresh <- data.frame(
       station_number = c(wsc_id, wsc_id),
-      Parmeter = c("Water Level (m)", "Discharge (cms)"),
+      Parameter = c("Water Level (m)", "Discharge (cms)"),
       n = c(0, 0),
       "25%" = c(NA, NA),
       "50%" = c(NA, NA),
       "75%" = c(NA, NA),
       "90%" = c(NA, NA),
       "100%" = c(NA, NA),
-      stringsAsFactors = FALSE
+      stringsAsFactors = FALSE,
+      check.names = FALSE
     )
   }
 
@@ -126,6 +127,9 @@ update_thresh <- function(wsc_ids, out_path) {
   
   load(out_path)
   
+  hy_thresh <- data.frame()
+  hy_vers_date <- ""
+  
   hy_vers_date <- max(tidyhydat::hy_version()$Date)
   
   hy_thresh <- purrr::map(
@@ -134,6 +138,6 @@ update_thresh <- function(wsc_ids, out_path) {
   ) %>%
     bind_rows()
 
-  save(hy_vers_date, hy_thresh[1:8], out_path)
+  save(hy_vers_date, hy_thresh, file=out_path)
 
 }

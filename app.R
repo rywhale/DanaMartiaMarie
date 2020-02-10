@@ -78,23 +78,25 @@ server <- function(input, output, session) {
       )
       
       # # Test with single station
+      # # Note: this breaks the cache, if
+      # # there's also a HYDAT update
       # gauge_data <- dd_hydro_data(
       #   station_id = "02HA006",
       #   prov_terr = "ON"
       #   )
       
       # Check HYDAT vers of percentiles vs current on machine
-      if(!tidyhydat::hy_version()$Date <= hy_vers_date){
+      if(tidyhydat::hy_version()$Date > hy_vers_date){
         
         incProgress(1 / 4, detail = "Updating historical information, this could take several minutes.")
         
-        update_thresh(unique(gauge_data$STATION_ID))
+        update_thresh(unique(gauge_data$STATION_ID), "danamartia_cache.rda")
         
         load("danamartia_cache.rda")
         
-      }else{
-        thresh_dat <- hy_thresh
       }
+      
+      thresh_dat <- hy_thresh
 
       # Combine parameter columns
       gauge_data <- gauge_data %>%
